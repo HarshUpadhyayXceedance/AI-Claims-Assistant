@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en" ng-app="claimsApp">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Claims Assistant</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body ng-controller="ClaimsController as vm">
+    <main class="container">
+      <h1>AI Claims Assistant</h1>
+      <p class="subtitle">Submit and review insurance claims using an AngularJS frontend.</p>
+
+      <section class="card">
+        <h2>New Claim</h2>
+        <form ng-submit="vm.addClaim()" novalidate>
+          <label>
+            Policy Number
+            <input type="text" ng-model="vm.newClaim.policyNumber" placeholder="POL-12345" required />
+          </label>
+
+          <label>
+            Claim Type
+            <select ng-model="vm.newClaim.type" required>
+              <option value="">Select a type</option>
+              <option ng-repeat="type in vm.claimTypes" value="{{ type }}">{{ type }}</option>
+            </select>
+          </label>
+
+          <label>
+            Claim Amount (USD)
+            <input type="number" min="1" ng-model="vm.newClaim.amount" placeholder="2500" required />
+          </label>
+
+          <label>
+            Description
+            <textarea ng-model="vm.newClaim.description" rows="4" placeholder="Describe the incident"></textarea>
+          </label>
+
+          <button type="submit">Submit Claim</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Submitted Claims ({{ vm.claims.length }})</h2>
+
+        <p class="empty" ng-if="!vm.claims.length">No claims submitted yet.</p>
+
+        <ul class="claims-list" ng-if="vm.claims.length">
+          <li ng-repeat="claim in vm.claims track by claim.id">
+            <header>
+              <strong>{{ claim.policyNumber }}</strong>
+              <span class="status">{{ claim.status }}</span>
+            </header>
+            <p><span>Type:</span> {{ claim.type }}</p>
+            <p><span>Amount:</span> {{ claim.amount | currency }}</p>
+            <p><span>Description:</span> {{ claim.description || 'N/A' }}</p>
+            <small>Created {{ claim.createdAt | date:'medium' }}</small>
+          </li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>
